@@ -36,14 +36,17 @@
 -- All globals:
 G = { }
 
+BASE_PITCH = 36
+NUM_BANKS = 6       -- Number of controller banks (currently 6)
+
 local function underside(how)
-    local dev = G.midi.devices[G.midi.mf_target]
+    local mf = G.midi.devices[G.midi.mf_target]
     
     for i = 16, 19 do      -- Pitches designating LEDs.
         if how then
-            dev:note_on(i, 33, 4)
+            mf:note_on(i, 33, 4)
         else
-            dev:note_on(i, 18, 4) -- There's no "off', just minimal "on".
+            mf:note_on(i, 18, 4) -- There's no "off', just minimal "on".
         end
     end
 end
@@ -55,9 +58,27 @@ end
 ]]
 
 local function process_note(pitch, is_on)
+    G.num_held_notes = (G.num_held_notes or 0) + (is_on and 1 or -1)
+    
+    local daw = G.midi.devices[G.midi.daw_target]
+    
+    --[[
+        For all except the first N buttons, we pass through the note
+        event, but on MIDI channel 1.
+    ]]
+
+    if pitch >= BASE_PITCH + NUM_BANKS then
+        -- MIDI Fighter can't do velocity, so just default it:
+        if is_on then
+            daw:note_on(pitch, 64, 1)
+        else
+            daw:note_off(pitch, 64, 1)
+        end
+    end
+    
     print("NOTE " .. pitch .. " mode " .. (is_on and "ON" or "OFF"))
     
-    underside(is_on)
+    underside(G.num_held_notes > 0)
 end
 
 local function setup_midi()
@@ -149,6 +170,7 @@ local function setup_arcs()
 end
 
 function init()
+    params:add_separator("The Printer Jam")
     setup_midi()
     setup_arcs()
 end
