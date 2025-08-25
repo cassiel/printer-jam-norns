@@ -20,7 +20,7 @@
     Output: feedback to the Spectra and arc, and outward MIDI to DAW.
     
     It's possible to drive the Spectra at 16 levels of brightness
-    (including 0)
+    (including 0), so we can do full greyscale shado.
     Implementation: we rig up a custom shado renderer which drives
     the Spectra at three levels (full white, half white, off).
     Scheme to be used for colour rendering TBC.
@@ -54,6 +54,7 @@ end
 local G = require "printer-jam-norns.lib.global"
 local ports = require "printer-jam-norns.lib.ports"
 local spectra = require "printer-jam-norns.lib.spectra"
+local visuals = require "printer-jam-norns.lib.visuals"
 
 -- All state globals (maybe this could be a shared package?):
 -- G = { }
@@ -92,6 +93,7 @@ local function process_note(pitch, is_on)
         end
     
         spectra.underside(G.num_held_notes > 0)
+        visuals.test(is_on)
     end
 end
 
