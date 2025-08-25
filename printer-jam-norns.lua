@@ -51,11 +51,12 @@ for k, _ in pairs(package.loaded) do
     end
 end
 
+local G = require "printer-jam-norns.lib.global"
 local ports = require "printer-jam-norns.lib.ports"
-spectra = require "printer-jam-norns.lib.spectra"
+local spectra = require "printer-jam-norns.lib.spectra"
 
 -- All state globals (maybe this could be a shared package?):
-G = { }
+-- G = { }
 
 NUM_BANKS = 6       -- Number of controller banks (currently 6)
 
@@ -90,12 +91,12 @@ local function process_note(pitch, is_on)
             end
         end
     
-        spectra.underside(G, G.num_held_notes > 0)
+        spectra.underside(G.num_held_notes > 0)
     end
 end
 
 function init()
-    ports.setup(G, {process_note = process_note})
+    ports.setup({process_note = process_note})
 end
 
 function redraw()

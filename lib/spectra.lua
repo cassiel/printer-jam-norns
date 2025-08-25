@@ -1,5 +1,7 @@
 -- Midi Fighter Spectra support.
 
+local G = require "printer-jam-norns.lib.global"
+
 local BASE_PITCH = 36
 
 -- Colour table: e.g. `COLOURS.yellow.lo`. Each colour
@@ -19,16 +21,20 @@ do
     end
 end
 
-local function light(G, pos, colour, level)
+--[[
+    LED ring. `pos` is 1..16 (indexed from lower left
+    of device). `colour` is MIDI velocity value for
+    full colour. `level` is brightness, 0..15.
+]]
+
+local function light(pos, colour, level)
     local mf = G.midi.devices[G.midi.mf_target]
     local p = (pos + BASE_PITCH - 1)
-    print(">>> note_on p=" .. p .. " v=" .. colour .. " ch=3")
     mf:note_on(p, colour, 3)
-    -- Level is 0..15.
     mf:note_on(p, 18 + level, 4)
 end
 
-local function underside(G, how)
+local function underside(how)
     local mf = G.midi.devices[G.midi.mf_target]
     
     for i = 16, 19 do      -- Pitches designating LEDs.

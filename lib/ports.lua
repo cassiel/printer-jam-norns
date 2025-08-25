@@ -1,4 +1,8 @@
-local function setup_midi(G, callbacks)
+-- Setting up MIDI and device ports via prefs.
+
+local G = require "printer-jam-norns.lib.global"
+
+local function setup_midi(callbacks)
     --[[
         Set up MIDI endpoints via virtual ports (so the devices
         here might not actually be connected, and/or a script
@@ -46,7 +50,7 @@ local function setup_midi(G, callbacks)
     }
 end
 
-local function setup_arcs(G)
+local function setup_arcs()
     --[[
         We are unlikely to connect more than one arc, but let's follow
         the MIDI template, connecting to all ports and
@@ -87,11 +91,11 @@ local function setup_arcs(G)
     }
 end
 
-local function setup(G, callbacks)
+local function setup(callbacks)
     tab.print(callbacks)
     params:add_separator("The Printer Jam: Ports")
-    setup_midi(G, callbacks)
-    setup_arcs(G)
+    setup_midi(callbacks)
+    setup_arcs()
 end
 
 return {
