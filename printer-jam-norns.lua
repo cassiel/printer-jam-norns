@@ -19,6 +19,8 @@
     
     Output: feedback to the Spectra and arc, and outward MIDI to DAW.
     
+    It's possible to drive the Spectra at 16 levels of brightness
+    (including 0)
     Implementation: we rig up a custom shado renderer which drives
     the Spectra at three levels (full white, half white, off).
     Scheme to be used for colour rendering TBC.
@@ -50,43 +52,12 @@ for k, _ in pairs(package.loaded) do
 end
 
 local ports = require "printer-jam-norns.lib.ports"
+spectra = require "printer-jam-norns.lib.spectra"
 
--- All state globals:
+-- All state globals (maybe this could be a shared package?):
 G = { }
 
-BASE_PITCH = 36
 NUM_BANKS = 6       -- Number of controller banks (currently 6)
-
--- Colour table: e.g. COLOURS.yellow.lo
-
-do
-    local names = {
-        "red", "orange", "yellow", "lime",
-        "green", "cyan", "blue", "purple",
-        "pink", "white"
-    }
-
-    COLOURS = { }
-    
-    for i = 1, #names do
-        local v_lo = (i - 1) * 12 + 13
-        local v_hi = (i - 1) * 12 + 7
-        if v_lo > 120 then v_lo = 1 end
-        COLOURS[names[i]] = {lo = v_lo, hi = v_hi}
-    end
-end
-
-local function underside(how)
-    local mf = G.midi.devices[G.midi.mf_target]
-    
-    for i = 16, 19 do      -- Pitches designating LEDs.
-        if how then
-            mf:note_on(i, 33, 4)
-        else
-            mf:note_on(i, 18, 4) -- There's no "off', just minimal "on".
-        end
-    end
-end
 
 --[[
     Deal with notes from the device designated as Spectra. We
@@ -100,7 +71,7 @@ local function process_note(pitch, is_on)
     G.num_held_notes = (G.num_held_notes or 0) + (is_on and 1 or -1)
     
     local daw = G.midi.devices[G.midi.daw_target]
-    local button0 = pitch - BASE_PITCH
+    local button0 = pitch - spectra.BASE_PITCH
     
     if button0 >= 0 and button0 < 16 then   -- Protection against out-of-range notes.
                                             -- (We should also filter on MIDI channel.)
@@ -117,9 +88,9 @@ local function process_note(pitch, is_on)
             else
                 daw:note_off(pitch, 64, 1)
             end
-        end        
+        end
     
-        underside(G.num_held_notes > 0)
+        spectra.underside(G, G.num_held_notes > 0)
     end
 end
 
