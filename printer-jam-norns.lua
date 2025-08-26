@@ -6,12 +6,12 @@
 -- Nick Rothwell, nick@cassiel.com.
 
 --[[
-    This is a norns port of some Max code which takes MIDI Fighter/arc
+    This is a norns port of some Max code which takes MIDI Fighter and arc
     input and generates banks of controller outputs (and some hard-wired
-    notes).
+    note messages).
 
     Input: one MIDI Fighter Spectra, one monome arc 4. There are six banks of
-    four controller outputs, hence 72 outputs. The rest of the Spectra
+    4 + 4 controller outputs, hence 48 outputs. The rest of the Spectra
     is relatively ad-hoc note output.
     
     We assume the Spectra is on Bank 1, default MIDI output. We will
@@ -23,7 +23,7 @@
     (including 0), so we can do full greyscale shado.
     Implementation: we rig up a custom shado renderer which drives
     the Spectra at three levels (full white, half white, off).
-    Scheme to be used for colour rendering TBC.
+    We'll hard-wire any colours in our custom renderer, post-shado.
 ]]
 
 --[[

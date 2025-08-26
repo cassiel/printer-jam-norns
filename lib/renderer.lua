@@ -12,7 +12,7 @@ local function render(renderable)
             level = math.floor(level * 15.0)        -- Maybe nudge that up?
             
             -- pos==1 is lower left:
-            local pos = (4 - y) * 4 + x
+            local pos = spectra.xy_to_pos(x, y)
             spectra.light(pos, spectra.COLOURS.red, level)
         end
     end

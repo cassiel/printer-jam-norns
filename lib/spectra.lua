@@ -21,6 +21,20 @@ do
     end
 end
 
+-- x and y are 1..4, from top.
+-- pos is 1..16, from bottom.
+
+local function xy_to_pos(x, y)
+    return (4 - y) * 4 + x
+end
+
+local function pos_to_xy(pos)
+    local x = (pos - 1) % 4 + 1
+    local row = 1 + math.floor((pos - 1) / 4)
+    local y = 5 - row
+    return x, y
+end
+
 --[[
     LED ring. `pos` is 1..16 (indexed from lower left
     of device). `colour` is MIDI velocity value for
@@ -49,6 +63,8 @@ end
 return {
     BASE_PITCH = BASE_PITCH,        --  Start pitch of MIDI notes.
     COLOURS = COLOURS,
+    pos_to_xy = pos_to_xy,
+    xy_to_pos = xy_to_pos,
     light = light,
     underside = underside
 }
