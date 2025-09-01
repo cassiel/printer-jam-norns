@@ -22,8 +22,6 @@ local function setup_midi(callbacks)
             "port "..i..": "..util.trim_string_to_width(devices[i].name, 40)
         )
         
-        -- I'm a little unsure of how G is scoped here, but it seems to work:
-        
         devices[i].event =
             function (x)
                 print("PORT [" .. i .. "]")

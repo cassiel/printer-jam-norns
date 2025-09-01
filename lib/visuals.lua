@@ -18,6 +18,7 @@ local function test(how)
         f:add(block, 2, 1)
     end
 
+    f:add(blocks.Block:new("1"), 8, 1)      -- Test banks.
     renderer.render(f)
 end
 

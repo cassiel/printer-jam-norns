@@ -16,13 +16,13 @@
     
     We assume the Spectra is on Bank 1, default MIDI output. We will
     probably also get note input from the side buttons, which we ignore.
+    (We can render to the remaining banks 2..4, but tracking button
+    input is more tricky since the pitch values change.)
     
     Output: feedback to the Spectra and arc, and outward MIDI to DAW.
     
     It's possible to drive the Spectra at 16 levels of brightness
     (including 0), so we can do full greyscale shado.
-    Implementation: we rig up a custom shado renderer which drives
-    the Spectra at three levels (full white, half white, off).
     We'll hard-wire any colours in our custom renderer, post-shado.
 ]]
 
