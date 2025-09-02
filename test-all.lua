@@ -6,6 +6,13 @@ local lu = require "luaunit"
 local G = require "printer-jam-norns.lib.global"
 local spectra = require "printer-jam-norns.lib.spectra"
 local visuals = require "printer-jam-norns.lib.visuals"
+local buttons = require "printer-jam-norns.lib.buttons"
+
+local types = require "shado.lib.types"
+local blocks = require "shado.lib.blocks"
+local frames = require "shado.lib.frames"
+local renderers = require "shado.lib.renderers"
+local manager = require "shado.lib.manager"
 
 local function mock_MIDI()
     local midi_log = { }
@@ -23,7 +30,7 @@ local function mock_MIDI()
             }
         },
 
-        mf_target = "mf"        -- In the live code this is an index.
+        mf_target = "mf"        -- In the live code this is a numeric index.
     }
 
     G.midi_log = midi_log
@@ -34,6 +41,16 @@ test_Start = {
         lu.assertEquals(1, 1)
         lu.assertEquals({1, 2}, {1, 2})
         lu.assertEquals({A=1, B=2}, {B=2, A=1})
+    end
+}
+
+test_Dependencies = {
+    test_Have_SHADO = function ()
+        lu.assertNotNil(types)
+        lu.assertNotNil(blocks)
+        lu.assertNotNil(frames)
+        lu.assertNotNil(renderers)
+        lu.assertNotNil(manager)
     end
 }
 
@@ -70,6 +87,11 @@ test_Lighting = {
         lu.assertEquals(G.midi_log[4], {type="+", p=67, v=28, ch=4})
     end,
 
+    --[[
+        Underside lighting: channel 4, pitches 16..19, velocity 33 for on
+        (or maximum), 18 for off (or minimum).
+    ]]
+
     test_Underside_ON = function ()
         spectra.underside(true)
         lu.assertEquals(#G.midi_log, 4)
@@ -85,7 +107,40 @@ test_Lighting = {
             lu.assertEquals(G.midi_log[i], {type="+", p=15 + i, v=18, ch=4})
         end
     end
+}
 
+test_Press = {
+    setUp = function ()
+        mock_MIDI()
+    end,
+
+    test_Press = function ()
+        --[[
+            Set up a shado-based responder, then press a button,
+            check that shado has responded.
+        ]]
+        local hit = false
+        local block = blocks.Block:new(4, 4)
+
+        block.press = function (self, x, y, how)
+            if  x == 1 and y == 1 and how == 1 then
+                hit = true
+            end
+        end
+
+        local buttoner = buttons.Buttons:new(block)
+        buttoner:press(48, 127, 3)    -- Top left button on (default) bank 1.
+        lu.assertTrue(hit)
+    end,
+
+    test_Press_across_Banks = function ()
+        --[[
+            Set up a shado-based responder, then press a button,
+            then mimick a bank switch (mock incoming message),
+            then press the same button (with different pitch),
+            check that shado has responded.
+        ]]
+    end
 }
 
 runner = lu.LuaUnit.new()

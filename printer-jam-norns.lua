@@ -68,7 +68,8 @@ NUM_BANKS = 6       -- Number of controller banks (currently 6)
 ]]
 
 local function process_note(pitch, is_on)
-    -- print("NOTE " .. pitch .. " mode " .. (is_on and "ON" or "OFF"))
+    -- print("NOTE " .. pitch .. " mode " .. (is_on and "ON" or "OFF")).
+    -- NOTE: should filter on chan=3.
         
     G.num_held_notes = (G.num_held_notes or 0) + (is_on and 1 or -1)
     
