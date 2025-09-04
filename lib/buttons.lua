@@ -23,6 +23,7 @@ end
 function Buttons:press(pitch, vel, chan)
     --[[
         If chan=4, then pitch is 0..3 for bank select (v=127).
+        (Deselect for previous bank comes in first [CHECK].)
         If chan=3, then pitch starts at 36..83 for button
         presses on first bank, then skips up 16 at a time.
         (So - sanity check - we could guess the bank
