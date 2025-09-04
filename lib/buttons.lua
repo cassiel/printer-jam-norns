@@ -2,6 +2,8 @@
     Raw button handling, MIDI direct from Spectra.
 ]]
 
+local spectra = require "printer-jam-norns.lib.spectra"
+
 --[[
     We're going OO here, because the button responder
     needs to be able to inject into the shado component
@@ -29,6 +31,10 @@ function Buttons:press(pitch, vel, chan)
         (So - sanity check - we could guess the bank
         from the pitch.)
     ]]
+    if chan == 3 then
+        local x, y = spectra.pos_to_xy(pitch - spectra.BASE_PITCH + 1)
+        self.shado_component:press(x, y, (vel > 0) and 1 or 0)
+    end
 end
 
 return {

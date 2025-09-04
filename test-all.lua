@@ -20,11 +20,11 @@ local function mock_MIDI()
     G.midi = {
         devices = {
             mf = {
-                note_on = function (_self, p, v, ch)
+                note_on = function (self, p, v, ch)
                     table.insert(midi_log, {type="+", p=p, v=v, ch=ch})
                 end,
 
-                note_off = function (_self, p, v, ch)
+                note_off = function (self, p, v, ch)
                     table.insert(midi_log, {type="-", p=p, v=v, ch=ch})
                 end
             }
@@ -109,7 +109,7 @@ test_Lighting = {
     end
 }
 
-test_Press = {
+test_Presses = {
     setUp = function ()
         mock_MIDI()
     end,
@@ -133,13 +133,61 @@ test_Press = {
         lu.assertTrue(hit)
     end,
 
+    test_Release = function ()
+        local hit = "none"
+        local block = blocks.Block:new(4, 4)
+
+        block.press = function (self, x, y, how)
+            if  x == 1 and y == 1 then
+                hit = (how == 1 and "on" or "off")
+            end
+        end
+
+        local buttoner = buttons.Buttons:new(block)
+        buttoner:press(48, 127, 3)
+        buttoner:press(48, 0, 3)
+        lu.assertEquals(hit, "off")
+    end,
+
     test_Press_across_Banks = function ()
         --[[
             Set up a shado-based responder, then press a button,
             then mimick a bank switch (mock incoming message),
-            then press the same button (with different pitch),
+            then release the same button (with different pitch),
             check that shado has responded.
         ]]
+        local hit = "none"
+        local block = blocks.Block:new(4, 4)
+
+        block.press = function (self, x, y, how)
+            if  x == 1 and y == 1 then
+                hit = (how == 1 and "on" or "off")
+            end
+        end
+
+        local buttoner = buttons.Buttons:new(block)
+        buttoner:press(48, 127, 3)      -- Press button.
+        buttoner:press(0, 0, 4)         -- Bank 1 deselect.
+        buttoner:press(1, 127, 4)       -- Bank 2 select.
+        buttoner:press(48 + 16, 0, 3)   -- And... release button when in bank 2.
+        lu.assertEquals(hit, "off")
+    end,
+
+    test_Press_in_Higher_Bank = function ()
+        local hit = false
+        local block = blocks.Block:new(8, 4)        -- Cover banks 1 and 2
+
+        block.press = function (self, x, y, how)
+            if  x == 5 and y == 1 and how == 1 then
+                hit = true
+            end
+        end
+
+        local buttoner = buttons.Buttons:new(block)
+        buttoner:press(0, 0, 4)            -- Bank 1 deselect.
+        buttoner:press(1, 127, 4)          -- Bank 2 select.
+        buttoner:press(48 + 16, 127, 3)    -- Top left button on bank 1.
+        lu.assertTrue(hit)
     end
 }
 
