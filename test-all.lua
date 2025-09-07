@@ -15,17 +15,17 @@ local renderers = require "shado.lib.renderers"
 local manager = require "shado.lib.manager"
 
 local function mock_MIDI()
-    local midi_log = { }
+    G.midi_log = { }
 
     G.midi = {
         devices = {
             mf = {
                 note_on = function (self, p, v, ch)
-                    table.insert(midi_log, {type="+", p=p, v=v, ch=ch})
+                    table.insert(G.midi_log, {type="+", p=p, v=v, ch=ch})
                 end,
 
                 note_off = function (self, p, v, ch)
-                    table.insert(midi_log, {type="-", p=p, v=v, ch=ch})
+                    table.insert(G.midi_log, {type="-", p=p, v=v, ch=ch})
                 end
             }
         },
@@ -33,7 +33,10 @@ local function mock_MIDI()
         mf_target = "mf"        -- In the live code this is a numeric index.
     }
 
-    G.midi_log = midi_log
+    G.state = {
+        spectra_bank = 1,
+        spectra_bank_when_held = { }  -- pos -> bank when held (1..4).
+    }
 end
 
 test_Start = {
@@ -149,7 +152,24 @@ test_Presses = {
         lu.assertEquals(hit, "off")
     end,
 
-    test_Press_across_Banks = function ()
+    test_Higher_Bank = function ()
+        local hit = false
+        local block = blocks.Block:new(8, 4)        -- Cover banks 1 and 2.
+
+        block.press = function (self, x, y, how)
+            if  x == 5 and y == 1 and how == 1 then
+                hit = true
+            end
+        end
+
+        local buttoner = buttons.Buttons:new(block)
+        buttoner:press(0, 0, 4)            -- Bank 1 deselect.
+        buttoner:press(1, 127, 4)          -- Bank 2 select.
+        buttoner:press(48 + 16, 127, 3)    -- Top left button on bank 2.
+        lu.assertTrue(hit)
+    end,
+
+    test_Release_across_Banks = function ()
         --[[
             Set up a shado-based responder, then press a button,
             then mimick a bank switch (mock incoming message),
