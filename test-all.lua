@@ -34,8 +34,8 @@ local function mock_MIDI()
     }
 
     G.state = {
-        spectra_bank = 1,
-        spectra_bank_when_held = { }  -- pos -> bank when held (1..4).
+        -- spectra_bank = 1,
+        -- spectra_bank_when_held = { }  -- pos -> bank when held (1..4).
     }
 end
 
