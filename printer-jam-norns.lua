@@ -100,6 +100,7 @@ end
 
 function init()
     ports.setup({process_note = process_note})
+    G.reset_state()
 end
 
 function redraw()

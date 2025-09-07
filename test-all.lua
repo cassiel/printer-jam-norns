@@ -32,11 +32,11 @@ local function mock_MIDI()
 
         mf_target = "mf"        -- In the live code this is a numeric index.
     }
+end
 
-    G.state = {
-        -- spectra_bank = 1,
-        -- spectra_bank_when_held = { }  -- pos -> bank when held (1..4).
-    }
+local function reset()
+    mock_MIDI()
+    G.reset_state()
 end
 
 test_Start = {
@@ -74,7 +74,7 @@ test_Mapping = {
 
 test_Lighting = {
     setUp = function ()
-        mock_MIDI()
+        reset()
     end,
 
     test_Light = function ()
@@ -114,7 +114,7 @@ test_Lighting = {
 
 test_Presses = {
     setUp = function ()
-        mock_MIDI()
+        reset()
     end,
 
     test_Press = function ()

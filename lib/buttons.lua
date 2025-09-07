@@ -34,14 +34,12 @@ function Buttons:press(pitch, vel, chan)
         (So - sanity check - we could guess the bank
         from the pitch.)
     ]]
-    G.state = G.state or { }
-
     if chan == 4 then
         if vel > 0 then     -- Ignore bank defocus.
             G.state.spectra_bank = pitch + 1
         end
     elseif chan == 3 then
-        local bank0 = (G.state.spectra_bank or 1) - 1
+        local bank0 = G.state.spectra_bank - 1
         local pos = pitch - spectra.BASE_PITCH - (bank0 * 16) + 1
         local x, y = spectra.pos_to_xy(pos)
 
@@ -51,10 +49,9 @@ function Buttons:press(pitch, vel, chan)
 
         if vel > 0 then
             self.shado_component:press(x + bank0 * 4, y, 1)
-            G.state.spectra_bank_when_held = G.state.spectra_bank_when_held or { }
-            G.state.spectra_bank_when_held[pos] = (G.state.spectra_bank or 1)
+            G.state.spectra_bank_when_held[pos] = G.state.spectra_bank
         else
-            local original_bank = (G.state.spectra_bank_when_held[pos] or 1)
+            local original_bank = G.state.spectra_bank_when_held[pos]
             self.shado_component:press(x + (original_bank - 1) * 4, y, 0)
         end
     end
