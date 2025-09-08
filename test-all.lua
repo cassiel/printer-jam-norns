@@ -125,8 +125,8 @@ test_Presses = {
         local hit = false
         local block = blocks.Block:new(4, 4)
 
-        block.press = function (self, x, y, how)
-            if  x == 1 and y == 1 and how == 1 then
+        function block:press(x, y, how)
+            if x == 1 and y == 1 and how == 1 then
                 hit = true
             end
         end
@@ -140,7 +140,7 @@ test_Presses = {
         local hit = "none"
         local block = blocks.Block:new(4, 4)
 
-        block.press = function (self, x, y, how)
+        function block:press(x, y, how)
             if  x == 1 and y == 1 then
                 hit = (how == 1 and "on" or "off")
             end
@@ -156,7 +156,7 @@ test_Presses = {
         local hit = false
         local block = blocks.Block:new(8, 4)        -- Cover banks 1 and 2.
 
-        block.press = function (self, x, y, how)
+        function block:press(x, y, how)
             if  x == 5 and y == 1 and how == 1 then
                 hit = true
             end
@@ -179,7 +179,7 @@ test_Presses = {
         local hit = "none"
         local block = blocks.Block:new(4, 4)
 
-        block.press = function (self, x, y, how)
+        function block:press(x, y, how)
             if  x == 1 and y == 1 then
                 hit = (how == 1 and "on" or "off")
             end
@@ -197,7 +197,7 @@ test_Presses = {
         local hit = false
         local block = blocks.Block:new(8, 4)        -- Cover banks 1 and 2
 
-        block.press = function (self, x, y, how)
+        function block:press(x, y, how)
             if  x == 5 and y == 1 and how == 1 then
                 hit = true
             end
