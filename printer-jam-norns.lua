@@ -53,19 +53,23 @@ local G = require "printer-jam-norns.lib.global"
 local ports = require "printer-jam-norns.lib.ports"
 local spectra = require "printer-jam-norns.lib.spectra"
 local visuals = require "printer-jam-norns.lib.visuals"
+local forms = require "printer-jam-norns.lib.forms"
+local buttons = require "printer-jam-norns.lib.buttons"
 
--- All state globals (maybe this could be a shared package?):
--- G = { }
+--[[
+    We have "G" for shared state, but let's have something
+    for state local to the main program as well.
+]]
+
+local M = { }
 
 NUM_BANKS = 6       -- Number of controller banks (currently 6)
 
 --[[
-    Deal with notes from the device designated as Spectra. We
-    don't care about MIDI channel and there's no velocity
-    variation.
+    Deal with notes from the device designated as Spectra.
 ]]
 
-local function process_note(pitch, is_on)
+local function process_note_OLD(pitch, is_on)
     -- print("NOTE " .. pitch .. " mode " .. (is_on and "ON" or "OFF")).
     -- NOTE: should filter on chan=3.
         
@@ -96,9 +100,16 @@ local function process_note(pitch, is_on)
     end
 end
 
+local function process_note(note, vel, ch)
+    print("process_note note=" .. note .. " vel=" .. vel .. " ch=" .. ch)
+    M.buttoner:press(note, vel, ch)
+end
+
 function init()
     ports.setup({process_note = process_note})
     G.reset_state()
+    M.main_form = forms.main_form()
+    M.buttoner = buttons.Buttons:new(M.main_form)
 end
 
 function redraw()

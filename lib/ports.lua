@@ -29,7 +29,8 @@ local function setup_midi(callbacks)
                 print("PORT [" .. i .. "]")
                 if i == G.midi.mf_target then
                     local msg = midi.to_msg(x)
-                    callbacks.process_note(msg.note, (msg.type == "note_on"))
+                    -- callbacks.process_note(msg.note, (msg.type == "note_on"))
+                    callbacks.process_note(msg.note, ((msg.type == "note_on") and 127 or 0), msg.ch)
                 end
 
                 tab.print(midi.to_msg(x))

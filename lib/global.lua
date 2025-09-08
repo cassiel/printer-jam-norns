@@ -1,6 +1,10 @@
 -- Shared global values. Anything global should go here.
 
-local G = { }
+local G = {
+    const = {
+        DIM = 0.5
+    }
+}
 
 function G.reset_state ()     -- Used in unit tests.
     G.state = {

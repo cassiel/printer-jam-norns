@@ -8,11 +8,7 @@ local spectra = require "printer-jam-norns.lib.spectra"
 local visuals = require "printer-jam-norns.lib.visuals"
 local buttons = require "printer-jam-norns.lib.buttons"
 
-local types = require "shado.lib.types"
 local blocks = require "shado.lib.blocks"
-local frames = require "shado.lib.frames"
-local renderers = require "shado.lib.renderers"
-local manager = require "shado.lib.manager"
 
 local function mock_MIDI()
     G.midi_log = { }
@@ -49,11 +45,7 @@ test_Start = {
 
 test_Dependencies = {
     test_Have_SHADO = function ()
-        lu.assertNotNil(types)
         lu.assertNotNil(blocks)
-        lu.assertNotNil(frames)
-        lu.assertNotNil(renderers)
-        lu.assertNotNil(manager)
     end
 }
 
