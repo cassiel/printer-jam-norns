@@ -42,12 +42,14 @@ function Buttons:press(pitch, vel, chan)
         local bank0 = G.state.spectra_bank - 1
         local pos = pitch - spectra.BASE_PITCH - (bank0 * 16) + 1
         local x, y = spectra.pos_to_xy(pos)
+        print("PRESS " .. x .. ", " .. y .. " vel=" .. vel)
 
         -- Issue: we might bank-switch while holding a button. So we
         -- remember the state of "pos" (its bank) on note-on and use
         -- that on note-off.
 
         if vel > 0 then
+            print("SHADO PRESS " .. x + bank0 * 4 .. ", " .. y .. " into shado " .. tostring(self.shado_component))
             self.shado_component:press(x + bank0 * 4, y, 1)
             G.state.spectra_bank_when_held[pos] = G.state.spectra_bank
         else

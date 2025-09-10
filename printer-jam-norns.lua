@@ -56,13 +56,6 @@ local visuals = require "printer-jam-norns.lib.visuals"
 local forms = require "printer-jam-norns.lib.forms"
 local buttons = require "printer-jam-norns.lib.buttons"
 
---[[
-    We have "G" for shared state, but let's have something
-    for state local to the main program as well.
-]]
-
-local M = { }
-
 NUM_BANKS = 6       -- Number of controller banks (currently 6)
 
 --[[
@@ -102,14 +95,14 @@ end
 
 local function process_note(note, vel, ch)
     print("process_note note=" .. note .. " vel=" .. vel .. " ch=" .. ch)
-    M.buttoner:press(note, vel, ch)
+    G.buttoner:press(note, vel, ch)
 end
 
 function init()
     ports.setup({process_note = process_note})
     G.reset_state()
-    M.main_form = forms.main_form()
-    M.buttoner = buttons.Buttons:new(M.main_form)
+    G.main_form = forms.main_form()
+    G.buttoner = buttons.Buttons:new(G.main_form)
 end
 
 function redraw()

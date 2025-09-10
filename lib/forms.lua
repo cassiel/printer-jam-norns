@@ -9,6 +9,7 @@ local spectra = require "printer-jam-norns.lib.spectra"
 local types = require "shado.lib.types"
 local blocks = require "shado.lib.blocks"
 local frames = require "shado.lib.frames"
+local manager = require "shado.lib.manager"
 
 local function underside()
     --[[
@@ -22,6 +23,7 @@ local function underside()
     block.num_held = 0
     
     function block:press(x, y, how)
+        print("Underside press")
         block.num_held = block.num_held + ((how == 1) and 1 or -1)
         spectra.underside(block.num_held > 0)
         
@@ -52,7 +54,7 @@ local function main_form()
     local f = frames.Frame:new()
     f:add(looper_buttons(), 1, 1)
     f:add(underside(), 1, 1)
-    return f
+    return manager.PressManager:new(f)
 end
 
 return {
