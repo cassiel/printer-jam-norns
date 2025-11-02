@@ -103,6 +103,8 @@ function init()
     G.reset_state()
     G.main_form = forms.main_form()
     G.buttoner = buttons.Buttons:new(G.main_form)
+    
+    spectra.underside(false)
 end
 
 function redraw()
